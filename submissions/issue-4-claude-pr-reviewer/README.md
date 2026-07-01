@@ -17,13 +17,22 @@ Every review is Markdown with exactly these sections:
 ## Install
 
 ```bash
-pip install anthropic          # the only dependency; GitHub access uses the stdlib
+# Option A — install the `claude-review` command (recommended)
+pip install .                  # from this directory; provides the claude-review entry point
+
+# Option B — just install the one dependency and run the script directly
+pip install anthropic
+
 export ANTHROPIC_API_KEY=sk-ant-...   # never hard-code it
 export GITHUB_TOKEN=ghp_...     # optional: raises rate limits, reads private repos
 ```
 
 Python 3.8+. Uses model `claude-opus-4-8` by default (override with `--model` or
-`CLAUDE_REVIEW_MODEL`).
+`CLAUDE_REVIEW_MODEL`). After Option A the documented command works verbatim:
+
+```bash
+claude-review --pr https://github.com/owner/repo/pull/123
+```
 
 ## Usage — CLI
 
@@ -52,6 +61,14 @@ secret. On every opened/updated PR the action installs `anthropic`, runs the
 reviewer, and posts the review as a PR comment. `GITHUB_TOKEN` is supplied
 automatically by Actions (the workflow requests `pull-requests: write` so it can
 comment).
+
+## Usage — Claude Code sub-agent
+
+[`claude-code-agent/pr-reviewer.md`](./claude-code-agent/pr-reviewer.md) is a
+Claude Code sub-agent definition. Drop it in `.claude/agents/` (project) or
+`~/.claude/agents/` (global) and Claude Code can review a PR on request by
+shelling out to `claude-review`. Give it a PR URL and it returns the structured
+review; ask it to post and it adds `--post`.
 
 ## How it works
 
